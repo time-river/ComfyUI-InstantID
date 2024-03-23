@@ -237,6 +237,7 @@ class IDGenerationNode_Zho:
                 "guidance_scale": ("FLOAT", {"default": 5, "min": 0, "max": 10, "display": "slider"}),
                 "enhance_face_region": ("BOOLEAN", {"default": True}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "vram_optimisation": (['off', 'level_1', 'level_2'], {"default": "level_1"}),
             },
             "optional": {
                 "pose_image_optional": ("IMAGE",), 
@@ -247,7 +248,7 @@ class IDGenerationNode_Zho:
     FUNCTION = "id_generate_image"
     CATEGORY = "📷InstantID"
                        
-    def id_generate_image(self, insightface, positive, negative, face_image, pipe, ip_adapter_scale, controlnet_conditioning_scale, steps, guidance_scale, seed, enhance_face_region, pose_image_optional=None):
+    def id_generate_image(self, insightface, positive, negative, face_image, pipe, ip_adapter_scale, controlnet_conditioning_scale, steps, guidance_scale, seed, enhance_face_region, pose_image_optional=None, vram_optimisation="level_1"):
 
         face_image = resize_img(face_image)
         
@@ -297,7 +298,8 @@ class IDGenerationNode_Zho:
             guidance_scale=guidance_scale,
             width=width,
             height=height,
-            return_dict=False
+            return_dict=False,
+            vram_optimisation=vram_optimisation
             )
 
         # 检查输出类型并相应处理
