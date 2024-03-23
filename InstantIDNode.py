@@ -189,6 +189,7 @@ class Ipadapter_instantidLoader_Node_Zho:
 
         # load adapter
         pipe.load_ip_adapter_instantid(face_adapter)
+        pipe.cuda()
 
         return [pipe]
 
