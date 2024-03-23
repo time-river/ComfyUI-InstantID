@@ -4,3 +4,4 @@ accelerate
 insightface
 diffusers
 onnxruntime-gpu
+onediff

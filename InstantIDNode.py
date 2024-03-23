@@ -189,6 +189,7 @@ class Ipadapter_instantidLoader_Node_Zho:
 
         # load adapter
         pipe.load_ip_adapter_instantid(face_adapter)
+        pipe.cuda()
 
         return [pipe]
 
@@ -297,7 +298,7 @@ class IDGenerationNode_Zho:
             guidance_scale=guidance_scale,
             width=width,
             height=height,
-            return_dict=False
+            return_dict=False,
             )
 
         # 检查输出类型并相应处理
@@ -329,7 +330,24 @@ class IDGenerationNode_Zho:
 
         return (output_image,)
 
+class OneDiffSpeedUp_Node_Zho:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "pipe": ("MODEL",)}
+        }
 
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "one_diff_speed"
+    CATEGORY = "📷InstantID"
+    def one_diff_speed(self, pipe):
+        if device == "cpu":
+            raise ValueError("Only GPU is supported for speed up.")
+        self.check_status()
+        from onediffx import compile_pipe
+        pipe = compile_pipe(pipe)
+        return [pipe]
 
 NODE_CLASS_MAPPINGS = {
     "InsightFaceLoader_Zho": InsightFaceLoader_Node_Zho,
@@ -338,7 +356,8 @@ NODE_CLASS_MAPPINGS = {
     "IDBaseModelLoader_local": IDBaseModelLoader_local_Node_Zho,
     "Ipadapter_instantidLoader": Ipadapter_instantidLoader_Node_Zho,
     "ID_Prompt_Styler": ID_Prompt_Style_Zho,
-    "IDGenerationNode": IDGenerationNode_Zho
+    "IDGenerationNode": IDGenerationNode_Zho,
+    "OneDiffSpeedUp_Node_Zho": OneDiffSpeedUp_Node_Zho
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -348,5 +367,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "IDBaseModelLoader_local": "📷ID Base Model Loader locally",
     "Ipadapter_instantidLoader": "📷Ipadapter_instantid Loader",
     "ID_Prompt_Styler": "📷ID Prompt_Styler",
-    "IDGenerationNode": "📷InstantID Generation"
+    "IDGenerationNode": "📷InstantID Generation",
+    "OneDiffSpeedUp_Node_Zho": "📷OneDiff Speed Up"
 }
